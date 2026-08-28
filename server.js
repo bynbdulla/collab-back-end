@@ -13,6 +13,9 @@ const meetingCtrl = require('./controllers/meetings-controller')
 const workspaceCtrl = require('./controllers/workspace-controller')
 const tasksCtrl = require('./controllers/tasks-controller')
 
+const dns = require("node:dns");
+
+dns.setServers(["8.8.8.8", "1.1.1.1"])
 
 const verifyToken = require('./middleware/verify-token')
 
@@ -33,21 +36,27 @@ app.post('/auth/sign-up', authCtrl.signUp)
 app.post('/auth/sign-in', authCtrl.signIn)
 
 // meetings router
-// app.post('/meetings', verifyToken, meetingCtrl.create)
+app.post('/workspaces/:workspaceId/meetings', verifyToken, meetingCtrl.create)
+app.get('/workspaces/:workspaceId/meetings', verifyToken , meetingCtrl.index)
+app.get('/workspaces/:workspaceId/meetings/:meetingId', verifyToken , meetingCtrl.show)
+app.put('/workspaces/:workspaceId/meetings/:meetingId', verifyToken , meetingCtrl.update)
+app.delete('/workspaces/:workspaceId/meetings/:meetingId', verifyToken, meetingCtrl.deleteMeeting)
 
 // task controller
-app.post('/tasks', verifyToken, tasksCtrl.create)
-app.get('/tasks', verifyToken, tasksCtrl.index)
-app.get('/tasks/:taskId', verifyToken, tasksCtrl.show)
-app.put('/tasks/:taskId', verifyToken, tasksCtrl.update)
-app.delete('/tasks/:taskId', verifyToken, tasksCtrl.deleteTask)
+app.post('/workspaces/:workspaceId/tasks', verifyToken, tasksCtrl.create)
+app.get('/workspaces/:workspaceId/tasks', verifyToken, tasksCtrl.index)
+app.get('/workspaces/:workspaceId/tasks/:taskId', verifyToken, tasksCtrl.show)
+app.put('/workspaces/:workspaceId/tasks/:taskId', verifyToken, tasksCtrl.update)
+app.delete('/workspaces/:workspaceId/tasks/:taskId', verifyToken, tasksCtrl.deleteTask)
 
 //workspace controller 
-app.post('/workspace', verifyToken, workspaceCtrl.create)
-app.get('/workspace', verifyToken, workspaceCtrl.index)
-app.get('/workspace/:workspaceId', verifyToken, workspaceCtrl.show)
-app.put('/workspace/:workspaceId', verifyToken, workspaceCtrl.update)
-app.delete('/workspace/:workspaceId', verifyToken, workspaceCtrl.deleteWorkspace)
+app.post('/workspaces', verifyToken, workspaceCtrl.create)
+app.get('/workspaces', verifyToken, workspaceCtrl.index)
+app.get('/workspaces/:workspaceId', verifyToken, workspaceCtrl.show)
+app.put('/workspaces/:workspaceId', verifyToken, workspaceCtrl.update)
+app.delete('/workspaces/:workspaceId', verifyToken, workspaceCtrl.deleteWorkspace)
+app.post('/workspaces/:workspaceId/members', verifyToken, workspaceCtrl.addMember)
+app.delete('/workspaces/:workspaceId/members/:userId',verifyToken , workspaceCtrl.removeMember )
 
 app.get('/users', verifyToken, usersCtrl.index)
 
