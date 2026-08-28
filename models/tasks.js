@@ -10,23 +10,24 @@ const tasksSchema = new mongoose.Schema(
       type: String,
     },
     priority: {
-        type: String,
-        enum: ['High', 'Medium' , 'Low']
+      type: String,
+      enum: ["High", "Medium", "Low"],
     },
     WorkspaceId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Workspace',
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Workspace",
     },
     assignedTo: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Memebers',
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
-    location: {
-        type: String
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true },
-)
+);
 
-const Tasks = mongoose.model('Tasks', tasksSchema)
-module.exports = Tasks
+const Tasks = mongoose.model("Tasks", tasksSchema);
+module.exports = Tasks;

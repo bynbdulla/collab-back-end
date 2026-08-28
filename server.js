@@ -9,6 +9,10 @@ const PORT = process.env.PORT ? process.env.PORT : "3000"
 
 const authCtrl = require('./controllers/auth')
 const usersCtrl = require('./controllers/users')
+const meetingCtrl = require('./controllers/meetings-controller')
+const workspaceCtrl = require('./controllers/workspace-controller')
+const tasksCtrl = require('./controllers/tasks-controller')
+
 
 const verifyToken = require('./middleware/verify-token')
 
@@ -27,6 +31,23 @@ app.use(morgan('dev'))
 // app.get('/auth/verify-token', authCtrl.verifyToken)
 app.post('/auth/sign-up', authCtrl.signUp)
 app.post('/auth/sign-in', authCtrl.signIn)
+
+// meetings router
+// app.post('/meetings', verifyToken, meetingCtrl.create)
+
+// task controller
+app.post('/tasks', verifyToken, tasksCtrl.create)
+app.get('/tasks', verifyToken, tasksCtrl.index)
+app.get('/tasks/:taskId', verifyToken, tasksCtrl.show)
+app.put('/tasks/:taskId', verifyToken, tasksCtrl.update)
+app.delete('/tasks/:taskId', verifyToken, tasksCtrl.deleteTask)
+
+//workspace controller 
+app.post('/workspace', verifyToken, workspaceCtrl.create)
+app.get('/workspace', verifyToken, workspaceCtrl.index)
+app.get('/workspace/:workspaceId', verifyToken, workspaceCtrl.show)
+app.put('/workspace/:workspaceId', verifyToken, workspaceCtrl.update)
+app.delete('/workspace/:workspaceId', verifyToken, workspaceCtrl.deleteWorkspace)
 
 app.get('/users', verifyToken, usersCtrl.index)
 

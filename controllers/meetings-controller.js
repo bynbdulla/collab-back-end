@@ -1,4 +1,3 @@
-// const express = require("express")
 // const Meetings = require("../models/meetings")
 
 // const create = async (req,res) =>{
