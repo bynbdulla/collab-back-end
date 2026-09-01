@@ -4,6 +4,7 @@ const Workspace = require("../models/workspace.js");
 const create = async (req, res) => {
   try {
     const workspace = await Workspace.findById(req.params.workspaceId);
+    console.log(workspace, "found workspace");
 
     if (!workspace) {
       return res.status(404).json({
@@ -18,8 +19,9 @@ const create = async (req, res) => {
     const newMeeting = {
       name: req.body.name,
       description: req.body.description,
-      WorkspaceId: req.params.WorkspaceId,
+      WorkspaceId: req.params.workspaceId,
       meetingDate: req.body.meetingDate,
+      meetingTime: req.body.meetingTime,
       location: req.body.location,
     };
 
@@ -42,6 +44,7 @@ const index = async (req, res) => {
     const meetings = await Meetings.find({})
       .populate("WorkspaceId")
       .sort({ meetingDate: "asc" });
+    console.log(meetings, "all meetings");
 
     res.status(200).json(meetings);
   } catch (err) {

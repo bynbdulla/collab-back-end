@@ -10,14 +10,11 @@ const create = async (req, res) => {
       members: [req.user._id],
     };
 
-    const workspace = await Workspace.create(
-      newWorkspace
-    );
+    const workspace = await Workspace.create(newWorkspace);
 
-    const populatedWorkspace =
-      await Workspace.findById(workspace._id)
-        .populate("owner")
-        .populate("members");
+    const populatedWorkspace = await Workspace.findById(workspace._id)
+      .populate("owner")
+      .populate("members");
 
     res.status(201).json(populatedWorkspace);
   } catch (err) {
@@ -28,12 +25,10 @@ const create = async (req, res) => {
 };
 
 const index = async (req, res) => {
+  console.log("inside index");
   try {
     const workspaces = await Workspace.find({
-      $or: [
-        { owner: req.user._id },
-        { members: req.user._id },
-      ],
+      $or: [{ owner: req.user._id }, { members: req.user._id }],
     })
       .populate("owner")
       .populate("members")
@@ -48,10 +43,9 @@ const index = async (req, res) => {
 };
 
 const show = async (req, res) => {
+  console.log("inside show");
   try {
-    const workspace = await Workspace.findById(
-      req.params.workspaceId
-    )
+    const workspace = await Workspace.findById(req.params.workspaceId)
       .populate("owner")
       .populate("members");
 
@@ -61,17 +55,14 @@ const show = async (req, res) => {
       });
     }
 
-    const isOwner =
-      workspace.owner._id.equals(req.user._id);
+    const isOwner = workspace.owner._id.equals(req.user._id);
 
-    const isMember = workspace.members.some(
-      (member) => member._id.equals(req.user._id)
+    const isMember = workspace.members.some((member) =>
+      member._id.equals(req.user._id),
     );
 
     if (!isOwner && !isMember) {
-      return res.status(403).send(
-        "You don't have access to this workspace!"
-      );
+      return res.status(403).send("You don't have access to this workspace!");
     }
 
     res.status(200).json(workspace);
@@ -84,9 +75,7 @@ const show = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const workspace = await Workspace.findById(
-      req.params.workspaceId
-    );
+    const workspace = await Workspace.findById(req.params.workspaceId);
 
     if (!workspace) {
       return res.status(404).json({
@@ -95,9 +84,7 @@ const update = async (req, res) => {
     }
 
     if (!workspace.owner.equals(req.user._id)) {
-      return res.status(403).send(
-        "You're not the admin!"
-      );
+      return res.status(403).send("You're not the admin!");
     }
 
     const updateData = {
@@ -105,14 +92,13 @@ const update = async (req, res) => {
       description: req.body.description,
     };
 
-    const updatedWorkspace =
-      await Workspace.findByIdAndUpdate(
-        req.params.workspaceId,
-        updateData,
-        { new: true }
-      )
-        .populate("owner")
-        .populate("members");
+    const updatedWorkspace = await Workspace.findByIdAndUpdate(
+      req.params.workspaceId,
+      updateData,
+      { new: true },
+    )
+      .populate("owner")
+      .populate("members");
 
     res.status(200).json(updatedWorkspace);
   } catch (err) {
@@ -124,9 +110,7 @@ const update = async (req, res) => {
 
 const deleteWorkspace = async (req, res) => {
   try {
-    const workspace = await Workspace.findById(
-      req.params.workspaceId
-    );
+    const workspace = await Workspace.findById(req.params.workspaceId);
 
     if (!workspace) {
       return res.status(404).json({
@@ -135,15 +119,12 @@ const deleteWorkspace = async (req, res) => {
     }
 
     if (!workspace.owner.equals(req.user._id)) {
-      return res.status(403).send(
-        "You're not the admin!"
-      );
+      return res.status(403).send("You're not the admin!");
     }
 
-    const deletedWorkspace =
-      await Workspace.findByIdAndDelete(
-        req.params.workspaceId
-      );
+    const deletedWorkspace = await Workspace.findByIdAndDelete(
+      req.params.workspaceId,
+    );
 
     res.status(200).json(deletedWorkspace);
   } catch (err) {
@@ -155,9 +136,7 @@ const deleteWorkspace = async (req, res) => {
 
 const addMember = async (req, res) => {
   try {
-    const workspace = await Workspace.findById(
-      req.params.workspaceId
-    );
+    const workspace = await Workspace.findById(req.params.workspaceId);
 
     if (!workspace) {
       return res.status(404).json({
@@ -166,18 +145,15 @@ const addMember = async (req, res) => {
     }
 
     if (!workspace.owner.equals(req.user._id)) {
-      return res.status(403).send(
-        "You're not the admin!"
-      );
+      return res.status(403).send("You're not the admin!");
     }
 
     const user = await User.findOne({
       username: req.body.username,
     });
 
-
-    const alreadyMember = workspace.members.some(
-      (member) => member.equals(user._id)
+    const alreadyMember = workspace.members.some((member) =>
+      member.equals(user._id),
     );
 
     if (alreadyMember) {
@@ -190,10 +166,9 @@ const addMember = async (req, res) => {
 
     await workspace.save();
 
-    const updatedWorkspace =
-      await Workspace.findById(workspace._id)
-        .populate("owner")
-        .populate("members");
+    const updatedWorkspace = await Workspace.findById(workspace._id)
+      .populate("owner")
+      .populate("members");
 
     res.status(200).json(updatedWorkspace);
   } catch (err) {
@@ -205,9 +180,7 @@ const addMember = async (req, res) => {
 
 const removeMember = async (req, res) => {
   try {
-    const workspace = await Workspace.findById(
-      req.params.workspaceId
-    );
+    const workspace = await Workspace.findById(req.params.workspaceId);
 
     if (!workspace) {
       return res.status(404).json({
@@ -216,25 +189,20 @@ const removeMember = async (req, res) => {
     }
 
     if (!workspace.owner.equals(req.user._id)) {
-      return res.status(403).send(
-        "You're not the admin!"
-      );
+      return res.status(403).send("You're not the admin!");
     }
 
-    const user = await User.findById(
-      req.params.userId
-    );
+    const user = await User.findById(req.params.userId);
 
     workspace.members = workspace.members.filter(
-      (member) => !member.equals(user._id)
+      (member) => !member.equals(user._id),
     );
 
     await workspace.save();
 
-    const updatedWorkspace =
-      await Workspace.findById(workspace._id)
-        .populate("owner")
-        .populate("members");
+    const updatedWorkspace = await Workspace.findById(workspace._id)
+      .populate("owner")
+      .populate("members");
 
     res.status(200).json(updatedWorkspace);
   } catch (err) {

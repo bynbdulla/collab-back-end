@@ -13,14 +13,14 @@ const create = async (req, res) => {
     }
 
     const user = await User.findOne({
-      username: req.body.username,
+      username: req.body.assignedTo,
     });
 
     const newTask = {
       name: req.body.name,
       description: req.body.description,
       priority: req.body.priority,
-      workspaceId: req.params.WorkspaceId,
+      workspaceId: req.params.workspaceId,
       assignedTo: user._id,
       owner: req.user._id,
       status: req.body.status
@@ -86,7 +86,7 @@ const update = async (req, res) => {
       name: req.body.name,
       description: req.body.description,
       priority: req.body.priority,
-      WorkspaceId: req.body.WorkspaceId,
+      WorkspaceId: req.body.workspaceId,
       status: req.body.status
 
     };
