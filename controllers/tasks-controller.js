@@ -3,6 +3,8 @@ const User = require("../models/user.js");
 const Workspace = require("../models/workspace.js");
 
 const create = async (req, res) => {
+  console.log(req.body);
+
   try {
     const workspace = await Workspace.findById(req.body.workspaceId);
     if (!workspace) {
@@ -15,18 +17,20 @@ const create = async (req, res) => {
     const user = await User.findOne({
       username: req.body.assignedTo,
     });
+    console.log(user);
 
     const newTask = {
       name: req.body.name,
       description: req.body.description,
       priority: req.body.priority,
-      workspaceId: req.params.workspaceId,
+      workspaceId: req.body.workspaceId,
       assignedTo: user._id,
       owner: req.user._id,
-      status: req.body.status
+      status: req.body.status,
     };
 
     const task = await Tasks.create(newTask);
+    console.log(task);
 
     const populatedTask = await Tasks.findById(task._id)
       .populate("assignedTo")
@@ -87,8 +91,7 @@ const update = async (req, res) => {
       description: req.body.description,
       priority: req.body.priority,
       WorkspaceId: req.body.workspaceId,
-      status: req.body.status
-
+      status: req.body.status,
     };
 
     // If a different user is assigned
@@ -107,7 +110,7 @@ const update = async (req, res) => {
     const updatedTask = await Tasks.findByIdAndUpdate(
       req.params.taskId,
       updateData,
-      { new: true }
+      { new: true },
     )
       .populate("assignedTo")
       .populate("WorkspaceId")
@@ -131,9 +134,7 @@ const deleteTask = async (req, res) => {
       return res.status(403).send("You're not the admin!");
     }
 
-    const deletedTask = await Tasks.findByIdAndDelete(
-      req.params.taskId
-    );
+    const deletedTask = await Tasks.findByIdAndDelete(req.params.taskId);
 
     res.status(200).json(deletedTask);
   } catch (err) {

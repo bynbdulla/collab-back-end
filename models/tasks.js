@@ -13,7 +13,7 @@ const tasksSchema = new mongoose.Schema(
       type: String,
       enum: ["High", "Medium", "Low"],
     },
-    WorkspaceId: {
+    workspaceId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Workspace",
     },
