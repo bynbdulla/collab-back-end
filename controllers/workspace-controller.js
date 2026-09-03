@@ -74,6 +74,7 @@ const show = async (req, res) => {
 };
 
 const update = async (req, res) => {
+  console.log("inside update");
   try {
     const workspace = await Workspace.findById(req.params.workspaceId);
 
@@ -90,6 +91,7 @@ const update = async (req, res) => {
     const updateData = {
       name: req.body.name,
       description: req.body.description,
+      members: req.body.members,
     };
 
     const updatedWorkspace = await Workspace.findByIdAndUpdate(
@@ -100,8 +102,11 @@ const update = async (req, res) => {
       .populate("owner")
       .populate("members");
 
+    console.log(updatedWorkspace);
+
     res.status(200).json(updatedWorkspace);
   } catch (err) {
+    console.log("error: ", err);
     res.status(500).json({
       err: err.message,
     });

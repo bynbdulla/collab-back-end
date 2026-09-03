@@ -3,8 +3,6 @@ const User = require("../models/user.js");
 const Workspace = require("../models/workspace.js");
 
 const create = async (req, res) => {
-  console.log(req.body);
-
   try {
     const workspace = await Workspace.findById(req.body.workspaceId);
     if (!workspace) {
@@ -34,7 +32,7 @@ const create = async (req, res) => {
 
     const populatedTask = await Tasks.findById(task._id)
       .populate("assignedTo")
-      .populate("WorkspaceId")
+      .populate("workspaceId")
       .populate("owner");
 
     res.status(201).json(populatedTask);
@@ -47,7 +45,7 @@ const index = async (req, res) => {
   try {
     const tasks = await Tasks.find({})
       .populate("assignedTo")
-      .populate("WorkspaceId")
+      .populate("workspaceId")
       .populate("owner")
       .sort({ createdAt: "desc" });
 
@@ -61,7 +59,7 @@ const show = async (req, res) => {
   try {
     const task = await Tasks.findById(req.params.taskId)
       .populate("assignedTo")
-      .populate("WorkspaceId")
+      .populate("workspaceId")
       .populate("owner");
 
     if (!task) {
@@ -90,7 +88,7 @@ const update = async (req, res) => {
       name: req.body.name,
       description: req.body.description,
       priority: req.body.priority,
-      WorkspaceId: req.body.workspaceId,
+      workspaceId: req.body.workspaceId,
       status: req.body.status,
     };
 
